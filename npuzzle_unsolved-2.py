@@ -70,12 +70,12 @@ def goal_test(state):
     """
     Returns True if the state is a goal state, False otherwise. 
     """    
-    counter = 0
+    successor_counter = 0
     for row in state:
         for cell in row: 
-            if counter != cell: 
+            if successor_counter != cell: 
                 return False 
-            counter += 1
+            successor_counter += 1
     return True
    
 def bfs(state):
@@ -86,7 +86,7 @@ def bfs(state):
     """
     FIFO_queue = []
     parents = []
-    actions = {}
+    actions = []
     costs = {}
 
     costs[state] = 0
@@ -137,8 +137,8 @@ def bfs(state):
     #print(start_vertex)
     #print(canMove)
     
-    counter = int(0)
-    parent_counter = 1
+    successor_counter = int(0)
+    parent_successor_counter = 1
     solved = False
     successors = []
 
@@ -154,30 +154,45 @@ def bfs(state):
         successors = get_successors(state)
         for successor in successors:
             #FIFO_queue.append(successor[1:][0])
-            FIFO_queue.append(successor)
+            if (successor not in FIFO_queue):
+                FIFO_queue.append(successor)
             #print(FIFO_queue)
+        costs[state] += 1
 
         while(solved != True):
 
+            #print(FIFO_queue[-1])
+
+            print(FIFO_queue)
+            print("====================")
+
             for i in range(len(successors)):
 
-                #print(FIFO_queue[counter][0:])
-                print(FIFO_queue[counter][0:][0])
-                if(goal_test(FIFO_queue[counter][1:][0])):
-                    #actions.add(successors[])
-                    solved = True
-                    return parents
-                counter += 1
-                #print(counter)
-                #print(FIFO_queue[counter])
+                #print(FIFO_queue[successor_counter][0:])
+                #print(FIFO_queue[successor_counter][0:][0])
+                #print(FIFO_queue[successor_counter][1:][0])
+                #print("====================")
+                    if(goal_test(FIFO_queue[successor_counter][1:][0])):
+                        #actions.add(successors[])
+                        solved = True
+                        #print(FIFO_queue)
+                        return actions
 
-            successors = get_successors(FIFO_queue[parent_counter][1:][0])
-            parent_counter += 1
-            parents.append(FIFO_queue[parent_counter][0:][0])
+                    if (successor_counter < len(FIFO_queue)-1):
+                        successor_counter += 1
+                    #print(successor_counter)
+                    #print(FIFO_queue[successor_counter])
+
+            successors = get_successors(FIFO_queue[parent_successor_counter][1:][0])
+            parent_successor_counter += 1
+            actions.append(FIFO_queue[parent_successor_counter][0:][0])
+            costs[state] += 1
 
             for successor in successors:
-                #FIFO_queue.append(successor[1:][0])
-                FIFO_queue.append(successor)
+                if (successor not in FIFO_queue):
+                    FIFO_queue.append(successor)
+                """ else:
+                    successor_counter -= 1 """
                 #print(successor)
                 #successor_action[successor[:1]] = successor[1:]
 
@@ -296,12 +311,16 @@ if __name__ == "__main__":
     #Easy test case
     test_state = ((1, 4, 2),
                   (0, 5, 8), 
-                  (3, 6, 7))  
+                  (3, 6, 7))
+
+    test_state2 = ((1, 0, 2),
+                  (4, 5, 8), 
+                  (3, 6, 7))
 
     #More difficult test case
-    #test_state = ((7, 2, 4),
-    #              (5, 0, 6), 
-    #              (8, 3, 1))  
+    test_state3 = ((7, 2, 4),
+                  (5, 0, 6), 
+                  (8, 3, 1))  
 
     print(state_to_string(test_state))
     print()
