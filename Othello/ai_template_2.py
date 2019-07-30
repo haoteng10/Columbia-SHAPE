@@ -21,12 +21,12 @@ def compute_utility(board, color):
 
 ############ MINIMAX ###############################
 
-def minimax_min_node(board, color):
-    return None
+# def minimax_min_node(board, color):
+#     return None
 
 
-def minimax_max_node(board, color):
-    return None 
+# def minimax_max_node(board, color):
+#     return None 
 
 def minimax(board, depth, isMaximize):
 
@@ -37,26 +37,30 @@ def minimax(board, depth, isMaximize):
 
     if depth == 0 or not get_possible_moves(board, color):
         return get_score(board)
+        #return
     
     newBoards = list()
-    good_moves = dict()
+    moves = dict()
 
     possibleMoves = get_possible_moves(board,color)
-    for i in range(possibleMoves):
+    for i in range(len(possibleMoves)):
         newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
+        moves[play_move(board,color,possibleMoves[i][0],possibleMoves[i][1])] = possibleMoves[i]
 
     if isMaximize:
         maxVal = -(float("inf"))
-        for i in range(newBoards):
+        for i in range(len(newBoards)):
             val = minimax(newBoards[i], depth-1,False)
-            maxVal = max(maxVal, val)
-        return maxVal
+            maxVal = max(maxVal, val[0])
+            currentMove = moves[newBoards[i]]
+        return maxVal,currentMove
     else:
         minVal = float('inf')
-        for i in range(newBoards):
+        for i in range(len(newBoards)):
             val = minimax(newBoards[i],depth-1,True)
-            minVal = min(minVal,val)
-        return minVal
+            minVal = min(minVal,val[0])
+            currentMove = moves[newBoards[i]]
+        return minVal,currentMove
         
 
 
@@ -67,7 +71,9 @@ def select_move_minimax(board, color):
     The return value is a tuple of integers (i,j), where
     i is the column and j is the row on the board.  
     """
-    return 0,0 
+    val,move = minimax(board,6,True)
+
+    return move
     
 ############ ALPHA-BETA PRUNING #####################
 
