@@ -5,13 +5,12 @@
 An AI player for Othello. This is the template file that you need to  
 complete and submit for the competition. 
 
-@author: Hao Teng
+@author: YOUR NAME
 """
 
 import random
 import sys
 import time
-import math
 
 # You can use the functions in othello_shared to write your AI 
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
@@ -23,29 +22,43 @@ def compute_utility(board, color):
 ############ MINIMAX ###############################
 
 def minimax_min_node(board, color):
-    allowedMoves = get_possible_moves(board,color)
-    possible_scores = dict()
-    currentMin = math.inf
-    currentMove = None
-
-    for individualMove in allowedMoves:
-        #newBoard = board[:]
-        newBoard = play_move(board,color,individualMove[0],individualMove[1])
-        score = get_score(newBoard)
-        possible_scores[newBoard] = score
-
-    for move, score in possible_scores:
-        currentMin = math.inf
-
-        if (score < currentMin):
-            currentMin = score
-            currentMove = move
-
-    return currentMove,currentMin
+    return None
 
 
 def minimax_max_node(board, color):
     return None 
+
+def minimax(board, depth, isMaximize):
+
+    if isMaximize:
+        color = 1
+    else:
+        color = 2
+
+    if depth == 0 or not get_possible_moves(board, color):
+        return get_score(board)
+    
+    newBoards = list()
+    good_moves = dict()
+
+    possibleMoves = get_possible_moves(board,color)
+    for i in range(possibleMoves):
+        newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
+
+    if isMaximize:
+        maxVal = -(float("inf"))
+        for i in range(newBoards):
+            val = minimax(newBoards[i], depth-1,False)
+            maxVal = max(maxVal, val)
+        return maxVal
+    else:
+        minVal = float('inf')
+        for i in range(newBoards):
+            val = minimax(newBoards[i],depth-1,True)
+            minVal = min(minVal,val)
+        return minVal
+        
+
 
     
 def select_move_minimax(board, color):
@@ -54,24 +67,7 @@ def select_move_minimax(board, color):
     The return value is a tuple of integers (i,j), where
     i is the column and j is the row on the board.  
     """
-
-    # 1 is black, 2 is white
-    # val --> the number of blacks
-
-    #allowedMoves = get_possible_moves(board,color)
-    currentCounter = color
-
-    #Search for the move with the best score
-
-    while(currentCounter % 2 == 0):
-        move,val = minimax_min_node(board,color)
-        currentCounter += 1
-    else:
-        move,val = minimax_max_node(board,color)
-        currentCounter += 1
-
-
-    return allowedMoves[-1]
+    return 0,0 
     
 ############ ALPHA-BETA PRUNING #####################
 
@@ -86,7 +82,6 @@ def alphabeta_max_node(board, color, alpha, beta):
 
 
 def select_move_alphabeta(board, color): 
-
     return 0,0 
 
 
@@ -101,8 +96,6 @@ def run_ai():
     print("Minimax AI") # First line is the name of this AI  
     color = int(input()) # Then we read the color: 1 for dark (goes first), 
                          # 2 for light. 
-
-    #print("2")
 
     while True: # This is the main loop 
         # Read in the current game status, for example:
