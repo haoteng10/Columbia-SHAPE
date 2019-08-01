@@ -63,7 +63,21 @@ def play_move(board, player, i, j):
     final = []
     for row in new_board: 
         final.append(tuple(row))
-    return tuple(final) 
+    return tuple(final)
+
+def play_move2(board, player, i, j):
+    new_board = []
+    for row in board: 
+        new_board.append(list(row[:]))
+    lines = find_lines(board, i,j, player)
+    new_board[j][i] = player
+    for line in lines: 
+        for u,v in line: 
+           new_board[v][u] = player 
+    ''' final = []
+    for row in new_board: 
+        final.append(tuple(row)) '''
+    return new_board
 
 def get_score(board):
     p1_count = 0

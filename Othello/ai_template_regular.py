@@ -48,33 +48,6 @@ def minimax(board, depth, color):
             return score1-score2,None
         elif(color == 2):
             return score1-score2,None
-
-    # if depth == 1:
-    #     score1,score2 = get_score(board)
-
-    #     if (color ==1):
-    #         color = 2
-    #     else:
-    #         color = 1
-
-    #     possibleMoves = get_possible_moves(board,color)
-
-    #     maxVal = -(math.inf)
-    #     minVal = math.inf
-
-    #     for i in range(len(possibleMoves)):
-
-    #         newBoards.append([play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]),possibleMoves[i]])
-    #         if isMaximize:
-    #             val,move = minimax(newBoards[i],depth-1,False,color)
-    #             maxVal = max(val,maxVal)
-    #             bestMove = newBoards[i][1]
-    #             return maxVal, bestMove
-    #         else:
-    #             val,move = minimax(newBoards[i],depth-1,True,color)
-    #             minVal = min(val,minVal)
-    #             bestMove = newBoards[i][1]
-    #             return minVal, bestMove
     
     moves = dict()
 
@@ -151,7 +124,6 @@ def select_move_minimax(board, color):
 # def alphabeta_max_node(board, color, alpha, beta):
 #     return None
 
-
 def alphabeta(board, depth, color, alpha,beta):
 
     if color == 1:
@@ -166,18 +138,35 @@ def alphabeta(board, depth, color, alpha,beta):
 
     if depth == 0 or not get_possible_moves(board, color):
         score1, score2 = get_score(board)
-        if (color == 1):
-            return score1-score2,None
-        elif(color == 2):
-            return score1-score2,None
+        return score1-score2,None
 
     '''
     Get as many moves as possible
     '''
+    # score = 0
+
+    # positional_strategy = [[15,-6,8,6,6,8,-6,15],
+    #                        [-6,-8,-4,-3,-3,-4,-8,-6],
+    #                        [8,-3,4,4,4,4,-3,8],
+    #                        [6,-2,4,4,4,4,-2,6],
+    #                        [6,-2,4,4,4,4,-2,6],
+    #                        [8,-3,4,4,4,4,-3,8],
+    #                        [-6,-8,-4,-3,-3,-4,-8,-6],
+    #                        [15,-6,8,6,6,8,-6,15]]
 
     '''
     Get as many points as possible with grading strategy
     '''
+    
+    # if depth == 0 or not get_possible_moves(board,color):
+    #     for i in range(len(board)):
+    #         for j in range(len(board)):
+    #             if (board[i][j] == 1):
+    #                 score += positional_strategy[i][j]
+    #             elif (board[i][j] == 2):
+    #                 score -= positional_strategy[i][j]
+                    
+    #     return score,None
     
     newBoards = list()
     moves = dict()
@@ -201,13 +190,13 @@ def alphabeta(board, depth, color, alpha,beta):
         maxVal = -(math.inf)
         best_board = None
 
-        timeout = time.time() + 5
+        timeout = time.time() + 4.999
 
         for i in range(len(newBoards)):
 
-            #Break after 10s
+            #Break after some time
             if (time.time() > timeout):
-                break
+                continue
 
             val,move = alphabeta(newBoards[i], depth-1,2,alpha,beta)
 
@@ -231,13 +220,13 @@ def alphabeta(board, depth, color, alpha,beta):
         minVal = math.inf
         best_board = None
 
-        timeout = time.time() + 5
+        timeout = time.time() + 4.999
 
         for i in range(len(newBoards)):
 
-            #Break after 10s
+            #Break after some time
             if (time.time() > timeout):
-                break
+                continue
 
             val,move = alphabeta(newBoards[i],depth-1,1, alpha,beta)
             if (min(minVal,val) == val):
@@ -245,7 +234,7 @@ def alphabeta(board, depth, color, alpha,beta):
 
             minVal = min(minVal, val) 
             beta = min(beta, minVal)  
-    
+
             # Alpha Beta Pruning  
             if beta <= alpha:  
                 break
@@ -255,7 +244,7 @@ def alphabeta(board, depth, color, alpha,beta):
         return minVal,bestMove
 
 def select_move_alphabeta(board, color): 
-    val,move = alphabeta(board,8, color, -math.inf, math.inf)
+    val,move = alphabeta(board,6, color, -math.inf, math.inf)
     return move
     #return val,0
 
