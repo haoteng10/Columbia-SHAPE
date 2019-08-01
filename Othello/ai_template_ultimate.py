@@ -20,61 +20,70 @@ def compute_utility(board, color):
 
 
 ############ MINIMAX ###############################
-
-# def minimax_min_node(board, color):
-#     return None
-
-
-# def minimax_max_node(board, color):
-#     return None 
-
-def minimax(board, depth, isMaximize):
-
-    if isMaximize:
-        color = 1
-    else:
-        color = 2
-
-    if depth == 0 or not get_possible_moves(board, color):
-        return get_score(board)
-        #return
     
-    newBoards = list()
-    moves = dict()
+def minimax_min_node(self, board, color, move_num, ply):
+    moves = board.get_legal_moves(color)
+#    if ply == 0:
+#       return self.heuristic(board, color)
+    bestscore = float('inf')
+    for move in moves:
+        newboard = board[:]
+        newboard = play_move(newboard,color,move[0],move[1])
+        score = self.minimax_max_node(newboard, -color, move_num, ply-1)
+        if score < bestscore:
+            bestscore = score
+    return bestscore
 
-    possibleMoves = get_possible_moves(board,color)
-    for i in range(len(possibleMoves)):
-        newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
-        moves[play_move(board,color,possibleMoves[i][0],possibleMoves[i][1])] = possibleMoves[i]
+def select_move_minimax(board, color, move_num, time_remaining, time_opponent, ply):
+    moves = get_possible_moves(board,color)
 
-    if isMaximize:
-        maxVal = -(float("inf"))
-        for i in range(len(newBoards)):
-            val = minimax(newBoards[i], depth-1,False)
-            maxVal = max(maxVal, val[0])
-            currentMove = moves[newBoards[i]]
-        return maxVal,currentMove
-    else:
-        minVal = float('inf')
-        for i in range(len(newBoards)):
-            val = minimax(newBoards[i],depth-1,True)
-            minVal = min(minVal,val[0])
-            currentMove = moves[newBoards[i]]
-        return minVal,currentMove
+    if not isinstance(moves, list):
+        score1,score2 = get_score(board)
+        boardScore = [score1,score2]
+        return boardScore, None
+   
+    # if time_remaining < 10:
+    #    return (0, max(moves, key=lambda move: self.greedy(board, color, move)) )
+
+    return_move = moves[0]
+    bestscore = - float('inf')
+    
+    #ply = 4
+    #will define ply later;
+    for move in moves:
+        newboard = board[:]
+        newboard = play_move(newboard,color,move[0],move[1])
         
+        if (color == 1):
+            opp = 2
+        else:
+            opp =1
+        score = minimax_min_node(newboard, opp, move_num, ply)
+        if score > bestscore:
+            bestscore = score
+            return_move = move
+    #return (bestscore,return_move)
+    return return_move
 
+def minimax_max_node(self, board, color, move_num, ply):
+    moves = board.get_legal_moves(color)
+    #if not isinstance(moves, list):
+    #   return board.count(color)
+#    if ply == 0:
+#       return self.heuristic(board, color)
+    bestscore = - float('inf')
+    for move in moves:
+        newboard = board[:]
+        newboard = play_move(newboard,color,move[0],move[1])
+        if (color == 1):
+            opp = 2
+        else:
+            opp =1
+        score = minimax_min_node(newboard, opp, move_num, ply-1)
+        if score > bestscore:
+            bestscore = score
+    return bestscore 
 
-    
-def select_move_minimax(board, color):
-    """
-    Given a board and a player color, decide on a move. 
-    The return value is a tuple of integers (i,j), where
-    i is the column and j is the row on the board.  
-    """
-    val,move = minimax(board,6,True)
-
-    return move
-    
 ############ ALPHA-BETA PRUNING #####################
 
 #alphabeta_min_node(board, color, alpha, beta, level, limit)
@@ -123,7 +132,7 @@ def run_ai():
                                   # 2 : light disk (player 2)
                     
             # Select the move and send it to the manager 
-            movei, movej = select_move_minimax(board, color)
+            movei, movej = select_move_minimax(board, color, 0, 20, 20, 5)
             #movei, movej = select_move_alphabeta(board, color)
             print("{} {}".format(movei, movej)) 
 

@@ -11,7 +11,6 @@ complete and submit for the competition.
 import random
 import sys
 import time
-import math
 
 # You can use the functions in othello_shared to write your AI 
 from othello_shared import find_lines, get_possible_moves, get_score, play_move
@@ -29,102 +28,52 @@ def compute_utility(board, color):
 # def minimax_max_node(board, color):
 #     return None 
 
-def minimax(board, depth, color):
-    if color == 1:
-        isMaximize = True
-    else:
-        isMaximize = False
-
-    newBoards = list()
-
-    '''
-    Base case
-    '''
-
+def minimax(board, depth, isMaximize, color):
     if depth == 0 or not get_possible_moves(board, color):
     #if not get_possible_moves(board, color):
         score1, score2 = get_score(board)
         if (color == 1):
-            return score1-score2,None
+            return score1,None
         elif(color == 2):
-            return score1-score2,None
-
-    # if depth == 1:
-    #     score1,score2 = get_score(board)
-
-    #     if (color ==1):
-    #         color = 2
-    #     else:
-    #         color = 1
-
-    #     possibleMoves = get_possible_moves(board,color)
-
-    #     maxVal = -(math.inf)
-    #     minVal = math.inf
-
-    #     for i in range(len(possibleMoves)):
-
-    #         newBoards.append([play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]),possibleMoves[i]])
-    #         if isMaximize:
-    #             val,move = minimax(newBoards[i],depth-1,False,color)
-    #             maxVal = max(val,maxVal)
-    #             bestMove = newBoards[i][1]
-    #             return maxVal, bestMove
-    #         else:
-    #             val,move = minimax(newBoards[i],depth-1,True,color)
-    #             minVal = min(val,minVal)
-    #             bestMove = newBoards[i][1]
-    #             return minVal, bestMove
+            return score2,None
     
+    newBoards = list()
     moves = dict()
 
-    ''' For every possible moves...create a new board with the individual move attached to the same list '''
-
     possibleMoves = get_possible_moves(board,color)
-
     for i in range(len(possibleMoves)):
         newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
         moves[play_move(board,color,possibleMoves[i][0],possibleMoves[i][1])] = possibleMoves[i]
 
-    '''
-    Change the color so the position changes for the next round.
-    '''
-
     if isMaximize:
-        '''
-        If it is a max player...get the max score and the moves associated with it
-        ''' 
-        maxVal = -(math.inf)
-        best_board = None
-
+        maxVal = -(float("inf"))
+        bestMove = moves[newBoards[0]]
         for i in range(len(newBoards)):
-
-            #3,None
-            val,move = minimax(newBoards[i], depth-1,2)
-
-            maxVal = max(maxVal, val) 
+            val,move = minimax(newBoards[i], depth-1,False, color)
+            maxVal = max(maxVal, val)
+            #Add the move for return when the new value is better
             if (max(maxVal,val) == val):
-                best_board = newBoards[i] 
-        
-        bestMove = moves[best_board]
-  
+                bestMove = moves[newBoards[i]]
+                #currentMove = move
+            if (color ==1):
+                color = 2
+            else:
+                color = 1
         return maxVal,bestMove
     else:
-        '''
-        If it is a min player...get the min score and the moves associated with it
-        '''
-        minVal = math.inf
-        best_board = None
-
+        minVal = float('inf')
+        bestMove = moves[newBoards[0]]
         for i in range(len(newBoards)):
-            val,move = minimax(newBoards[i],depth-1,1)
+            val,move = minimax(newBoards[i],depth-1,True, color)
+            minVal = min(minVal,val)
+            #Add the move for return when the new value is better
             if (min(minVal,val) == val):
-                best_board = newBoards[i]
-
-            minVal = min(minVal, val) 
-
-        bestMove = moves[best_board]
-
+                bestMove = moves[newBoards[i]]
+                #currentMove = move
+            if (color ==1):
+                color = 2
+            else:
+                color = 1
         return minVal,bestMove
         
 
@@ -136,128 +85,88 @@ def select_move_minimax(board, color):
     The return value is a tuple of integers (i,j), where
     i is the column and j is the row on the board.  
     """
-    val,move = minimax(board,math.inf,color)
+    val,move = minimax(board,float('inf'),True,color)
 
+    #print(val,0)
     return move
+#    return 0,0
     
 ############ ALPHA-BETA PRUNING #####################
 
 #alphabeta_min_node(board, color, alpha, beta, level, limit)
-# def alphabeta_min_node(board, color, alpha, beta): 
-#     return None
+def alphabeta_min_node(board, color, alpha, beta): 
+    return None
 
 
 #alphabeta_max_node(board, color, alpha, beta, level, limit)
-# def alphabeta_max_node(board, color, alpha, beta):
-#     return None
+def alphabeta_max_node(board, color, alpha, beta):
+    return None
 
+def alphabeta(board, depth, isMaximize, color, alpha,beta):
 
-def alphabeta(board, depth, color, alpha,beta):
-
-    if color == 1:
-        isMaximize = True
-    else:
-        isMaximize = False    
-
-
-    '''
-    Get as many pieces as possible
-    '''
+    # if isMaximize:
+    #     color = 1
+    # else:
+    #     color = 2
 
     if depth == 0 or not get_possible_moves(board, color):
+    #if not get_possible_moves(board, color):
         score1, score2 = get_score(board)
         if (color == 1):
-            return score1-score2,None
+            return score1,None
         elif(color == 2):
-            return score1-score2,None
-
-    '''
-    Get as many moves as possible
-    '''
-
-    '''
-    Get as many points as possible with grading strategy
-    '''
+            return score2,None
+        #return
     
     newBoards = list()
     moves = dict()
 
-    ''' For every possible moves...create a new board with the individual move attached to the same list '''
-
     possibleMoves = get_possible_moves(board,color)
-
     for i in range(len(possibleMoves)):
         newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
         moves[play_move(board,color,possibleMoves[i][0],possibleMoves[i][1])] = possibleMoves[i]
 
-    '''
-    Change the color so the position changes for the next round.
-    '''
-
     if isMaximize:
-        '''
-        If it is a max player...get the max score and the moves associated with it
-        ''' 
-        maxVal = -(math.inf)
-        best_board = None
-
-        timeout = time.time() + 5
-
+        maxVal = -(float("inf"))
         for i in range(len(newBoards)):
-
-            #Break after 10s
-            if (time.time() > timeout):
-                break
-
-            val,move = alphabeta(newBoards[i], depth-1,2,alpha,beta)
-
-            maxVal = max(maxVal, val) 
+            val,move = alphabeta(newBoards[i], depth-1,False, color, alpha,beta)
+            if (color ==1):
+                color = 2
+            else:
+                color = 1
             if (max(maxVal,val) == val):
-                best_board = newBoards[i]
+                bestMove = moves[newBoards[i]]
 
+            maxVal = max(maxVal, val)  
             alpha = max(alpha, maxVal)  
   
             # Alpha Beta Pruning  
-            if beta <= alpha:
-                break
-        
-        bestMove = moves[best_board]
+            if beta <= alpha:  
+                break 
         return maxVal,bestMove
-
     else:
-        '''
-        If it is a min player...get the min score and the moves associated with it
-        '''
-        minVal = math.inf
-        best_board = None
-
-        timeout = time.time() + 5
-
+        minVal = float('inf')
         for i in range(len(newBoards)):
-
-            #Break after 10s
-            if (time.time() > timeout):
-                break
-
-            val,move = alphabeta(newBoards[i],depth-1,1, alpha,beta)
+            val,move = alphabeta(newBoards[i],depth-1,True, color, alpha, beta)
+            if (color ==1):
+                color = 2
+            else:
+                color = 1
             if (min(minVal,val) == val):
-                best_board = newBoards[i]
+                bestMove = moves[newBoards[i]]
 
-            minVal = min(minVal, val) 
+            minVal = min(minVal, val)  
             beta = min(beta, minVal)  
-    
+  
             # Alpha Beta Pruning  
             if beta <= alpha:  
-                break
-
-        bestMove = moves[best_board]
-
+                break 
         return minVal,bestMove
 
 def select_move_alphabeta(board, color): 
-    val,move = alphabeta(board,8, color, -math.inf, math.inf)
+    val,move = alphabeta(board,6,True, color, -10000, 10000)
     return move
-    #return val,0
+    #return 0,0
 
 
 ####################################################
