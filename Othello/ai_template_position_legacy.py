@@ -48,6 +48,7 @@ def minimax(board, depth, color):
             return score1-score2,None
         elif(color == 2):
             return score1-score2,None
+
     
     moves = dict()
 
@@ -124,9 +125,9 @@ def select_move_minimax(board, color):
 # def alphabeta_max_node(board, color, alpha, beta):
 #     return None
 
-def alphabeta_run (board,depth, color, alpha,beta, maxTime):
-    timeout = time.time() + maxTime
-    def alphabeta(board,depth,color,alpha,beta):
+def alphabeta_run (board, depth, color, alpha, beta, maxTime):
+    timerem = time.time() + maxTime
+    def alphabeta(board, depth, color, alpha,beta):
 
         if color == 1:
             isMaximize = True
@@ -146,6 +147,15 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
         Get as many moves as possible
         '''
 
+        # positional_strategy = [[35,-6,8,6,6,8,-6,35],
+        #                     [-6,-8,-4,-3,-3,-4,-8,-6],
+        #                     [8,-3,4,4,4,4,-3,8],
+        #                     [6,-2,4,3,3,4,-2,6],
+        #                     [6,-2,4,3,3,4,-2,6],
+        #                     [8,-3,4,4,4,4,-3,8],
+        #                     [-6,-8,-4,-3,-3,-4,-8,-6],
+        #                     [35,-6,8,6,6,8,-6,35]]
+
         positional_strategy = [[100,-20,12,6,6,12,-20,100],
                                [-20,-10,12,-3,-3,12,-10,-20],
                                [12,3,12,12,12,12,3,12],
@@ -158,9 +168,8 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
         '''
         Get as many points as possible with positional strategy
         '''
-
-        if time.time() >= timeout or not get_possible_moves(board,color):
-
+        
+        if (time.time() >= timerem or not get_possible_moves(board,color)):
             score = 0
             for i in range(len(board)):
                 for j in range(len(board)):
@@ -175,11 +184,11 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
             elif (color == 2):
                 score += p1_score - p2_score
 
-            # if (get_possible_moves(board,color)):
-            #     if (len(get_possible_moves(board,color)) >= 3):
-            #         score += 10
-            #     elif (len(get_possible_moves(board,color)) > 1):
-            #         score += 5
+            if (get_possible_moves(board,color)):
+                if (len(get_possible_moves(board,color)) > 2):
+                    score += 4
+                elif (len(get_possible_moves(board,color)) > 1):
+                    score += 2
 
             return score,None
         
@@ -208,7 +217,7 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
             for i in range(len(newBoards)):
 
                 #Break after some time
-                # if (time.time() >= timeout):
+                # if (time.time() > timeout):
                 #     break
 
                 val,move = alphabeta(newBoards[i], depth+1,2,alpha,beta)
@@ -236,7 +245,7 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
             for i in range(len(newBoards)):
 
                 #Break after some time
-                # if (time.time() >= timeout):
+                # if (time.time() > timeout):
                 #     break
 
                 val,move = alphabeta(newBoards[i],depth+1,1, alpha,beta)
@@ -253,11 +262,12 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
             bestMove = moves[best_board]
 
             return minVal,bestMove
-    val,move = alphabeta(board,depth,color,alpha,beta)
-    return val, move
 
-def select_move_alphabeta(board, color):
-    val,move = alphabeta_run(board,0, color, -math.inf, math.inf, 5)
+    val, move = alphabeta(board,depth,color,alpha,beta)
+    return move
+
+def select_move_alphabeta(board, color): 
+    val,move = alphabeta_run(board,0, color, -math.inf, math.inf, 9)
     return move
     #return val,0
 
@@ -270,7 +280,7 @@ def run_ai():
     Then it repeatedly receives the current score and current board state
     until the game is over. 
     """
-    print("MysteryQ AI") # First line is the name of this AI  
+    print("Hao AI v2.1") # First line is the name of this AI  
     color = int(input()) # Then we read the color: 1 for dark (goes first), 
                          # 2 for light. 
 

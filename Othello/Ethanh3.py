@@ -174,7 +174,7 @@ def run_ai():
                                   # 1 : dark disk (player 1)
                                   # 2 : light disk (player 2)
                     
-            movei, movej = alphabeta(board, color, 6, 9)
+            movei, movej = alphabeta(board, color, 6, 5)
 
             print("{} {}".format(movei, movej)) 
 

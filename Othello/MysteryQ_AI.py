@@ -19,100 +19,6 @@ from othello_shared import find_lines, get_possible_moves, get_score, play_move
 def compute_utility(board, color):
     return 0
 
-
-############ MINIMAX ###############################
-
-# def minimax_min_node(board, color):
-#     return None
-
-
-# def minimax_max_node(board, color):
-#     return None 
-
-def minimax(board, depth, color):
-    if color == 1:
-        isMaximize = True
-    else:
-        isMaximize = False
-
-    newBoards = list()
-
-    '''
-    Base case
-    '''
-
-    if depth == 0 or not get_possible_moves(board, color):
-    #if not get_possible_moves(board, color):
-        score1, score2 = get_score(board)
-        if (color == 1):
-            return score1-score2,None
-        elif(color == 2):
-            return score1-score2,None
-    
-    moves = dict()
-
-    ''' For every possible moves...create a new board with the individual move attached to the same list '''
-
-    possibleMoves = get_possible_moves(board,color)
-
-    for i in range(len(possibleMoves)):
-        newBoards.append(play_move(board,color,possibleMoves[i][0],possibleMoves[i][1]))
-        moves[play_move(board,color,possibleMoves[i][0],possibleMoves[i][1])] = possibleMoves[i]
-
-    '''
-    Change the color so the position changes for the next round.
-    '''
-
-    if isMaximize:
-        '''
-        If it is a max player...get the max score and the moves associated with it
-        ''' 
-        maxVal = -(math.inf)
-        best_board = None
-
-        for i in range(len(newBoards)):
-
-            #3,None
-            val,move = minimax(newBoards[i], depth-1,2)
-
-            maxVal = max(maxVal, val) 
-            if (max(maxVal,val) == val):
-                best_board = newBoards[i] 
-        
-        bestMove = moves[best_board]
-  
-        return maxVal,bestMove
-    else:
-        '''
-        If it is a min player...get the min score and the moves associated with it
-        '''
-        minVal = math.inf
-        best_board = None
-
-        for i in range(len(newBoards)):
-            val,move = minimax(newBoards[i],depth-1,1)
-            if (min(minVal,val) == val):
-                best_board = newBoards[i]
-
-            minVal = min(minVal, val) 
-
-        bestMove = moves[best_board]
-
-        return minVal,bestMove
-        
-
-
-    
-def select_move_minimax(board, color):
-    """
-    Given a board and a player color, decide on a move. 
-    The return value is a tuple of integers (i,j), where
-    i is the column and j is the row on the board.  
-    """
-    val,move = minimax(board,math.inf,color)
-
-    return move
-    
 ############ ALPHA-BETA PRUNING #####################
 
 #alphabeta_min_node(board, color, alpha, beta, level, limit)
@@ -125,7 +31,7 @@ def select_move_minimax(board, color):
 #     return None
 
 def alphabeta_run (board,depth, color, alpha,beta, maxTime):
-    timeout = time.time() + maxTime
+    timeout = time.time() + maxTime - 0.3255
     def alphabeta(board,depth,color,alpha,beta):
 
         if color == 1:
@@ -146,14 +52,23 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
         Get as many moves as possible
         '''
 
-        positional_strategy = [[100,-20,12,6,6,12,-20,100],
-                               [-20,-10,12,-3,-3,12,-10,-20],
-                               [12,3,12,12,12,12,3,12],
-                               [6,-3,12,3,3,12,-3,6],
-                               [6,-3,12,3,3,12,-3,6],
-                               [12,12,12,12,12,12,12,12],
-                               [-20,-10,12,-3,-3,12,-10,-20],
-                               [100,-20,12,6,6,12,-20,100]]
+        # positional_strategy = [[100,-20,12,6,6,12,-20,100],
+        #                        [-20,-10,3,-3,-3,3,-10,-20],
+        #                        [12,3,4,4,4,4,3,12],
+        #                        [6,-2,4,3,3,4,-2,6],
+        #                        [6,-2,4,3,3,4,-2,6],
+        #                        [12,3,4,4,4,4,3,12],
+        #                        [-20,-10,3,-3,-3,3,-10,-20],
+        #                        [100,-20,12,6,6,12,-20,100]]
+
+        positional_strategy = [[100,-20,20,8,8,20,-20,100],
+                               [-20,-20,6,-3,-3,6,-20,-20],
+                               [20,6,8,12,12,8,6,20],
+                               [8,-3,12,4,4,12,-3,8],
+                               [8,-3,12,4,4,12,-3,8],
+                               [20,6,8,12,12,8,6,20],
+                               [-20,-20,6,-3,-3,6,-20,-20],
+                               [100,-20,20,6,6,20,-20,100]]
 
         '''
         Get as many points as possible with positional strategy
@@ -166,20 +81,46 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
                 for j in range(len(board)):
                     if (board[i][j] == 1):
                         score += positional_strategy[i][j]
-                    elif (board[i][j] == 2):
+                    if (board[i][j] == 2):
                         score -= positional_strategy[i][j]
 
             p1_score, p2_score = get_score(board)
             if (color == 1):
                 score += p1_score - p2_score
+                if (board[0][0] == 2):
+                    score -= 80
+                if (board[7][0] == 2):
+                    score -= 80
+                if (board[0][7] == 2):
+                    score -= 80
+                if (board [7][7] == 2):
+                    score -= 80
             elif (color == 2):
                 score += p1_score - p2_score
+                if (board[0][0] == 1):
+                    score += 80
+                if (board[7][0] == 1):
+                    score += 80
+                if (board[0][7] == 1):
+                    score += 80
+                if (board [7][7] == 1):
+                    score += 80
 
-            # if (get_possible_moves(board,color)):
-            #     if (len(get_possible_moves(board,color)) >= 3):
-            #         score += 10
-            #     elif (len(get_possible_moves(board,color)) > 1):
-            #         score += 5
+            if (get_possible_moves(board,color)):
+                if (len(get_possible_moves(board,color)) > 2):
+                    score += 1
+
+            if (color == 1):
+                opp = 2
+            else:
+                opp = 1
+        
+            if(get_possible_moves(board, opp)):
+                if (len(get_possible_moves(board,opp)) > 2):
+                    if (color == 1):
+                        score -= 1
+                    else:
+                        score += 1
 
             return score,None
         
@@ -257,7 +198,8 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
     return val, move
 
 def select_move_alphabeta(board, color):
-    val,move = alphabeta_run(board,0, color, -math.inf, math.inf, 5)
+    #Change the last parameter in order to change the time (in seconds)
+    val,move = alphabeta_run(board,6, color, -math.inf, math.inf, 5)
     return move
     #return val,0
 
