@@ -146,6 +146,15 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
         Get as many moves as possible
         '''
 
+        # positional_strategy = [[100,-20,12,6,6,12,-20,100],
+        #                        [-20,-10,3,-3,-3,3,-10,-20],
+        #                        [12,3,4,4,4,4,3,12],
+        #                        [6,-2,4,3,3,4,-2,6],
+        #                        [6,-2,4,3,3,4,-2,6],
+        #                        [12,3,4,4,4,4,3,12],
+        #                        [-20,-10,3,-3,-3,3,-10,-20],
+        #                        [100,-20,12,6,6,12,-20,100]]
+
         positional_strategy = [[100,-20,12,6,6,12,-20,100],
                                [-20,-10,12,-3,-3,12,-10,-20],
                                [12,3,12,12,12,12,3,12],
@@ -175,11 +184,11 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
             elif (color == 2):
                 score += p1_score - p2_score
 
-            # if (get_possible_moves(board,color)):
-            #     if (len(get_possible_moves(board,color)) >= 3):
-            #         score += 10
-            #     elif (len(get_possible_moves(board,color)) > 1):
-            #         score += 5
+            if (get_possible_moves(board,color)):
+                if (len(get_possible_moves(board,color)) > 2):
+                    score += 4
+                elif (len(get_possible_moves(board,color)) > 1):
+                    score += 2
 
             return score,None
         
@@ -257,7 +266,7 @@ def alphabeta_run (board,depth, color, alpha,beta, maxTime):
     return val, move
 
 def select_move_alphabeta(board, color):
-    val,move = alphabeta_run(board,0, color, -math.inf, math.inf, 9.9)
+    val,move = alphabeta_run(board,0, color, -math.inf, math.inf, 9.825)
     return move
     #return val,0
 
@@ -270,7 +279,7 @@ def run_ai():
     Then it repeatedly receives the current score and current board state
     until the game is over. 
     """
-    print("Hao AI v2.0") # First line is the name of this AI  
+    print("Hao AI v2.1") # First line is the name of this AI  
     color = int(input()) # Then we read the color: 1 for dark (goes first), 
                          # 2 for light. 
 
